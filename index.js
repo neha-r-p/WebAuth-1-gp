@@ -1,10 +1,10 @@
-const express = require('express');
-const helmet = require('helmet');
-const cors = require('cors');
-const bcrypt = require('bcryptjs');
+const express = require("express");
+const helmet = require("helmet");
+const cors = require("cors");
+const bcrypt = require("bcryptjs");
 
-const db = require('./database/dbConfig.js');
-const Users = require('./users/users-model.js');
+const db = require("./database/dbConfig.js");
+const Users = require("./users/users-model.js");
 
 const server = express();
 
@@ -12,11 +12,11 @@ server.use(helmet());
 server.use(express.json());
 server.use(cors());
 
-server.get('/', (req, res) => {
+server.get("/", (req, res) => {
   res.send("It's alive!");
 });
 
-server.post('/api/register', (req, res) => {
+server.post("/api/register", (req, res) => {
   let user = req.body;
 
   Users.add(user)
@@ -28,7 +28,7 @@ server.post('/api/register', (req, res) => {
     });
 });
 
-server.post('/api/login', (req, res) => {
+server.post("/api/login", (req, res) => {
   let { username, password } = req.body;
 
   Users.findBy({ username })
@@ -37,7 +37,7 @@ server.post('/api/login', (req, res) => {
       if (user) {
         res.status(200).json({ message: `Welcome ${user.username}!` });
       } else {
-        res.status(401).json({ message: 'Invalid Credentials' });
+        res.status(401).json({ message: "Invalid Credentials" });
       }
     })
     .catch(error => {
@@ -45,7 +45,7 @@ server.post('/api/login', (req, res) => {
     });
 });
 
-server.get('/api/users', (req, res) => {
+server.get("/api/users", (req, res) => {
   Users.find()
     .then(users => {
       res.json(users);
@@ -53,17 +53,15 @@ server.get('/api/users', (req, res) => {
     .catch(err => res.send(err));
 });
 
-server.get('/hash', (req, res) => {
-
+server.get("/hash", (req, res) => {
   const name = req.query.name;
-  console.log(name)
+  console.log(name);
 
   // hash the name
 
-  const hash = ''; // use bcryptjs to hash the name
-
+  const hash = bcrypt.hashSync(name, 12); // use bcryptjs to hash the name
+ 
   res.send(`the hash for ${name} is ${hash}`);
-
 });
 
 const port = process.env.PORT || 5000;
